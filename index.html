@@ -3,755 +3,843 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WNBA Playoff Bracket Pool 2025</title>
+    <title>WNBA 2025 Playoff Bracket Pool</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-        }
-        
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff6b35, #1a1a1a);
+            color: white;
+            margin: 0;
             padding: 20px;
+            min-height: 100vh;
         }
-        
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.85);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
         .header {
             text-align: center;
             margin-bottom: 30px;
-            color: white;
         }
-        
+
         .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-size: 2.5em;
+            margin: 0;
+            color: #ff6b35;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
-        
+
         .header p {
-            font-size: 1.1rem;
+            font-size: 1.2em;
+            margin: 10px 0;
             opacity: 0.9;
         }
-        
-        .tabs {
+
+        .nav-tabs {
             display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
             justify-content: center;
-            flex-wrap: wrap;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 5px;
         }
-        
-        .tab {
-            background: rgba(255,255,255,0.1);
+
+        .nav-tab {
+            background: transparent;
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 25px;
+            padding: 12px 25px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 16px;
+            margin: 0 5px;
             transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
         }
-        
-        .tab:hover {
-            background: rgba(255,255,255,0.2);
-            transform: translateY(-2px);
+
+        .nav-tab.active {
+            background: #ff6b35;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
         }
-        
-        .tab.active {
-            background: rgba(255,255,255,0.3);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+
+        .nav-tab:hover {
+            background: rgba(255, 107, 53, 0.7);
         }
-        
+
         .tab-content {
             display: none;
-            background: rgba(255,255,255,0.95);
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            backdrop-filter: blur(10px);
         }
-        
+
         .tab-content.active {
             display: block;
         }
-        
-        .form-group {
-            margin-bottom: 20px;
+
+        .instructions {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 4px solid #ff6b35;
         }
-        
-        .form-group label {
+
+        .scoring-info {
+            background: rgba(255, 107, 53, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 107, 53, 0.3);
+        }
+
+        .scoring-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .score-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .participant-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .participant-info input {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 16px;
+            margin-top: 8px;
+        }
+
+        .bracket-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .round-section {
+            background: rgba(255, 107, 53, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 107, 53, 0.5);
+        }
+
+        .round-title {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ff6b35;
+            font-size: 1.1em;
+            background: rgba(255, 107, 53, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .matchup {
+            margin-bottom: 18px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .matchup label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
+            font-weight: bold;
+            color: #ffb347;
         }
-        
-        .form-group input,
-        .form-group select {
+
+        .matchup select {
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e1e8ed;
-            border-radius: 8px;
-            font-size: 1rem;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            background: white;
+            color: #333;
+            font-size: 15px;
+            border: 2px solid transparent;
             transition: border-color 0.3s ease;
         }
-        
-        .form-group input:focus,
-        .form-group select:focus {
+
+        .matchup select:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+            border-color: #ff6b35;
         }
-        
-        .matchup {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-left: 4px solid #667eea;
+
+        .finals-section {
+            grid-column: 1 / -1;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.15), rgba(255, 140, 66, 0.15));
+            border: 2px solid #ff6b35;
         }
-        
-        .matchup h3 {
-            margin-bottom: 15px;
-            color: #333;
-            font-size: 1.2rem;
+
+        .finals-section select {
+            max-width: 350px;
+            font-size: 16px;
+            padding: 15px;
         }
-        
-        .vs-container {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            flex-wrap: wrap;
+
+        .submit-section {
+            text-align: center;
+            margin-top: 30px;
         }
-        
-        .vs-container select {
-            flex: 1;
-            min-width: 180px;
-        }
-        
-        .vs-text {
-            font-weight: bold;
-            color: #667eea;
-            font-size: 1.1rem;
-        }
-        
+
         .submit-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(45deg, #ff6b35, #ff8c42);
             color: white;
+            padding: 18px 45px;
             border: none;
-            padding: 15px 40px;
             border-radius: 25px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: bold;
             cursor: pointer;
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
             transition: all 0.3s ease;
-            width: 100%;
-            margin-top: 20px;
         }
-        
+
         .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102,126,234,0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.5);
         }
-        
+
         .submit-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
         }
-        
-        .message {
+
+        .results-display {
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            display: none;
+            border: 1px solid rgba(255, 107, 53, 0.3);
+        }
+
+        .results-display.success {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+
+        .results-display.error {
+            border-color: #f44336;
+            background: rgba(244, 67, 54, 0.1);
+        }
+
+        .dashboard {
+            overflow-x: auto;
+        }
+
+        .dashboard-table {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .dashboard-table th,
+        .dashboard-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dashboard-table th {
+            background: rgba(255, 107, 53, 0.3);
+            font-weight: bold;
+            color: #ff6b35;
+        }
+
+        .dashboard-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #ff6b35;
+        }
+
+        .status-message {
             padding: 15px;
             border-radius: 8px;
-            margin-bottom: 20px;
-            font-weight: 500;
+            margin: 15px 0;
+            font-weight: bold;
         }
-        
-        .message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+
+        .status-success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4CAF50;
+            color: #4CAF50;
         }
-        
-        .message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+
+        .status-error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid #f44336;
+            color: #f44336;
         }
-        
-        .message.info {
-            background: #cce7ff;
-            color: #004085;
-            border: 1px solid #b3d7ff;
-        }
-        
-        .success-display {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            padding: 25px;
-            border-radius: 15px;
-            margin-top: 20px;
-            display: none;
-        }
-        
-        .success-display h3 {
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-        }
-        
-        .picks-summary {
-            background: rgba(255,255,255,0.1);
-            padding: 15px;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
-        }
-        
-        .submissions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        
-        .submission-card {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            border-left: 4px solid #667eea;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .submission-card h3 {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-        }
-        
+
         .admin-section {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
+            background: rgba(255, 255, 255, 0.05);
             padding: 20px;
             border-radius: 10px;
-            margin-bottom: 20px;
+            margin-top: 20px;
         }
-        
-        .admin-section h3 {
-            color: #856404;
-            margin-bottom: 15px;
-        }
-        
-        .url-input {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .url-input input {
-            flex: 1;
-            min-width: 300px;
-        }
-        
-        .url-input button {
-            background: #28a745;
+
+        .refresh-btn {
+            background: #4CAF50;
             color: white;
+            padding: 10px 20px;
             border: none;
-            padding: 12px 20px;
             border-radius: 5px;
             cursor: pointer;
+            margin: 10px 5px;
         }
-        
-        .instructions {
-            background: #e7f3ff;
-            border: 1px solid #b3d7ff;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
+
+        .refresh-btn:hover {
+            background: #45a049;
         }
-        
-        .instructions h3 {
-            color: #004085;
-            margin-bottom: 15px;
-        }
-        
-        .instructions ol {
-            margin-left: 20px;
-        }
-        
-        .instructions li {
-            margin-bottom: 8px;
-        }
-        
+
         @media (max-width: 768px) {
+            .bracket-section {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
             .container {
                 padding: 15px;
             }
             
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .vs-container {
-                flex-direction: column;
-            }
-            
-            .vs-container select {
-                min-width: 100%;
-            }
-            
-            .url-input {
-                flex-direction: column;
-            }
-            
-            .url-input input {
-                min-width: 100%;
+            .nav-tabs {
+                flex-wrap: wrap;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header class="header">
-            <h1>🏀 WNBA Playoff Bracket Pool 2025</h1>
-            <p>Make your picks and compete with friends!</p>
-        </header>
-        
-        <div class="tabs">
-            <button class="tab active" onclick="showTab('picks')">Make Picks</button>
-            <button class="tab" onclick="showTab('dashboard')">Dashboard</button>
-            <button class="tab" onclick="showTab('admin')">Admin</button>
+        <div class="header">
+            <h1>🏀 WNBA 2025 PLAYOFF BRACKET POOL</h1>
+            <p>Office Pool Manager • Games Begin September 14th</p>
         </div>
-        
-        <!-- Make Picks Tab -->
-        <div id="picks" class="tab-content active">
-            <h2>Submit Your Bracket</h2>
-            <div id="message-container"></div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('bracket')">Make Picks</button>
+            <button class="nav-tab" onclick="showTab('dashboard')">Dashboard</button>
+            <button class="nav-tab" onclick="showTab('admin')">Admin</button>
+        </div>
+
+        <!-- BRACKET TAB -->
+        <div id="bracket" class="tab-content active">
+            <div class="instructions">
+                <h3>📋 Instructions & Scoring</h3>
+                <p>Fill out your picks for each round. Submit before games begin on September 14th!</p>
+            </div>
+
+            <div class="scoring-info">
+                <h4>🎯 Scoring System</h4>
+                <div class="scoring-breakdown">
+                    <div class="score-item">
+                        <strong>First Round</strong><br>
+                        1 point per correct pick<br>
+                        (4 points max)
+                    </div>
+                    <div class="score-item">
+                        <strong>Semifinals</strong><br>
+                        2 points per correct pick<br>
+                        (4 points max)
+                    </div>
+                    <div class="score-item">
+                        <strong>Finals</strong><br>
+                        4 points for champion<br>
+                        (4 points max)
+                    </div>
+                    <div class="score-item">
+                        <strong>Perfect Bracket</strong><br>
+                        12 points total<br>
+                        🏆 Winner takes all!
+                    </div>
+                </div>
+            </div>
             
             <form id="bracketForm">
-                <div class="form-group">
-                    <label for="participantName">Your Name *</label>
-                    <input type="text" id="participantName" name="participantName" required>
+                <div class="participant-info">
+                    <label for="participantName"><strong>Your Name:</strong></label>
+                    <input type="text" id="participantName" name="participantName" required placeholder="Enter your full name">
                 </div>
                 
-                <div class="matchup">
-                    <h3>First Round - Game 1</h3>
-                    <div class="vs-container">
-                        <select id="game1" name="game1" required>
-                            <option value="">Select Winner</option>
-                            <option value="New York Liberty">New York Liberty</option>
-                            <option value="Atlanta Dream">Atlanta Dream</option>
-                        </select>
-                        <span class="vs-text">vs</span>
-                        <span style="flex: 1; text-align: center; font-weight: bold;">New York Liberty vs Atlanta Dream</span>
+                <div class="bracket-section">
+                    <!-- Left Side First Round -->
+                    <div class="round-section">
+                        <div class="round-title">FIRST ROUND - LEFT SIDE<br>(Best of 3 • 1 point each)</div>
+                        
+                        <div class="matchup">
+                            <label for="game1">#1 Minnesota Lynx vs #8 Golden State Valkyries</label>
+                            <select id="game1" name="game1" required>
+                                <option value="">Select Winner</option>
+                                <option value="Minnesota Lynx">Minnesota Lynx</option>
+                                <option value="Golden State Valkyries">Golden State Valkyries</option>
+                            </select>
+                        </div>
+                        
+                        <div class="matchup">
+                            <label for="game2">#4 Phoenix Mercury vs #5 New York Liberty</label>
+                            <select id="game2" name="game2" required>
+                                <option value="">Select Winner</option>
+                                <option value="Phoenix Mercury">Phoenix Mercury</option>
+                                <option value="New York Liberty">New York Liberty</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Side First Round -->
+                    <div class="round-section">
+                        <div class="round-title">FIRST ROUND - RIGHT SIDE<br>(Best of 3 • 1 point each)</div>
+                        
+                        <div class="matchup">
+                            <label for="game3">#2 Las Vegas Aces vs #7 Seattle Storm</label>
+                            <select id="game3" name="game3" required>
+                                <option value="">Select Winner</option>
+                                <option value="Las Vegas Aces">Las Vegas Aces</option>
+                                <option value="Seattle Storm">Seattle Storm</option>
+                            </select>
+                        </div>
+                        
+                        <div class="matchup">
+                            <label for="game4">#3 Atlanta Dream vs #6 Indiana Fever</label>
+                            <select id="game4" name="game4" required>
+                                <option value="">Select Winner</option>
+                                <option value="Atlanta Dream">Atlanta Dream</option>
+                                <option value="Indiana Fever">Indiana Fever</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="matchup">
-                    <h3>First Round - Game 2</h3>
-                    <div class="vs-container">
-                        <select id="game2" name="game2" required>
-                            <option value="">Select Winner</option>
-                            <option value="Las Vegas Aces">Las Vegas Aces</option>
-                            <option value="Seattle Storm">Seattle Storm</option>
-                        </select>
-                        <span class="vs-text">vs</span>
-                        <span style="flex: 1; text-align: center; font-weight: bold;">Las Vegas Aces vs Seattle Storm</span>
+                <div class="bracket-section">
+                    <!-- Left Semifinal -->
+                    <div class="round-section">
+                        <div class="round-title">SEMIFINAL 1<br>(Best of 5 • 2 points)</div>
+                        
+                        <div class="matchup">
+                            <label for="semi1">Winner of (Lynx/Valkyries) vs Winner of (Mercury/Liberty)</label>
+                            <select id="semi1" name="semi1" required>
+                                <option value="">Select Winner</option>
+                                <option value="Minnesota Lynx">Minnesota Lynx</option>
+                                <option value="Golden State Valkyries">Golden State Valkyries</option>
+                                <option value="Phoenix Mercury">Phoenix Mercury</option>
+                                <option value="New York Liberty">New York Liberty</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Semifinal -->
+                    <div class="round-section">
+                        <div class="round-title">SEMIFINAL 2<br>(Best of 5 • 2 points)</div>
+                        
+                        <div class="matchup">
+                            <label for="semi2">Winner of (Aces/Storm) vs Winner of (Dream/Fever)</label>
+                            <select id="semi2" name="semi2" required>
+                                <option value="">Select Winner</option>
+                                <option value="Las Vegas Aces">Las Vegas Aces</option>
+                                <option value="Seattle Storm">Seattle Storm</option>
+                                <option value="Atlanta Dream">Atlanta Dream</option>
+                                <option value="Indiana Fever">Indiana Fever</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="matchup">
-                    <h3>First Round - Game 3</h3>
-                    <div class="vs-container">
-                        <select id="game3" name="game3" required>
-                            <option value="">Select Winner</option>
-                            <option value="Minnesota Lynx">Minnesota Lynx</option>
-                            <option value="Phoenix Mercury">Phoenix Mercury</option>
-                        </select>
-                        <span class="vs-text">vs</span>
-                        <span style="flex: 1; text-align: center; font-weight: bold;">Minnesota Lynx vs Phoenix Mercury</span>
-                    </div>
-                </div>
-                
-                <div class="matchup">
-                    <h3>First Round - Game 4</h3>
-                    <div class="vs-container">
-                        <select id="game4" name="game4" required>
-                            <option value="">Select Winner</option>
-                            <option value="Connecticut Sun">Connecticut Sun</option>
-                            <option value="Indiana Fever">Indiana Fever</option>
-                        </select>
-                        <span class="vs-text">vs</span>
-                        <span style="flex: 1; text-align: center; font-weight: bold;">Connecticut Sun vs Indiana Fever</span>
-                    </div>
-                </div>
-                
-                <div class="matchup">
-                    <h3>Semifinal - Game 1</h3>
-                    <div class="vs-container">
-                        <select id="semi1" name="semi1" required>
-                            <option value="">Select Winner</option>
-                        </select>
-                        <span class="vs-text">vs</span>
-                        <span id="semi1-matchup" style="flex: 1; text-align: center; font-style: italic;">Select first round winners first</span>
-                    </div>
-                </div>
-                
-                <div class="matchup">
-                    <h3>Semifinal - Game 2</h3>
-                    <div class="vs-container">
-                        <select id="semi2" name="semi2" required>
-                            <option value="">Select Winner</option>
-                        </select>
-                        <span class="vs-text">vs</span>
-                        <span id="semi2-matchup" style="flex: 1; text-align: center; font-style: italic;">Select first round winners first</span>
-                    </div>
-                </div>
-                
-                <div class="matchup">
-                    <h3>🏆 Championship Game</h3>
-                    <div class="vs-container">
+                <!-- Finals -->
+                <div class="finals-section round-section">
+                    <div class="round-title">🏆 WNBA FINALS 🏆<br>(Best of 5 • 4 points)</div>
+                    
+                    <div class="matchup">
+                        <label for="finals">2025 WNBA Champion</label>
                         <select id="finals" name="finals" required>
                             <option value="">Select Champion</option>
+                            <option value="Minnesota Lynx">Minnesota Lynx</option>
+                            <option value="Golden State Valkyries">Golden State Valkyries</option>
+                            <option value="Phoenix Mercury">Phoenix Mercury</option>
+                            <option value="New York Liberty">New York Liberty</option>
+                            <option value="Las Vegas Aces">Las Vegas Aces</option>
+                            <option value="Seattle Storm">Seattle Storm</option>
+                            <option value="Atlanta Dream">Atlanta Dream</option>
+                            <option value="Indiana Fever">Indiana Fever</option>
                         </select>
-                        <span class="vs-text">🏆</span>
-                        <span id="finals-matchup" style="flex: 1; text-align: center; font-style: italic;">Select semifinal winners first</span>
                     </div>
                 </div>
                 
-                <button type="submit" class="submit-btn">Submit Bracket 🏀</button>
+                <div class="submit-section">
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        📝 Submit My Bracket Picks 🏆
+                    </button>
+                </div>
             </form>
             
-            <div id="successDisplay" class="success-display">
-                <h3>🎉 Bracket Submitted Successfully!</h3>
-                <div class="picks-summary" id="picksDisplay"></div>
-            </div>
-        </div>
-        
-        <!-- Dashboard Tab -->
-        <div id="dashboard" class="tab-content">
-            <h2>📊 All Submissions</h2>
-            <div id="dashboardContent">
-                <p>Loading submissions...</p>
-            </div>
-        </div>
-        
-        <!-- Admin Tab -->
-        <div id="admin" class="tab-content">
-            <h2>⚙️ Admin Settings</h2>
-            
-            <div class="admin-section">
-                <h3>Google Sheets Integration</h3>
-                <p><strong>Status:</strong> <span style="color: green;">✅ Configured and Ready</span></p>
-                <p>All submissions are automatically saved to your Google Sheet. The URL is hardcoded in the system.</p>
-                
-                <div style="margin-top: 15px;">
-                    <label for="webAppUrl">Google Apps Script URL (Optional Override):</label>
-                    <div class="url-input">
-                        <input type="url" id="webAppUrl" placeholder="https://script.google.com/macros/s/...">
-                        <button onclick="saveWebAppUrl()">Save URL</button>
-                    </div>
-                    <small style="color: #666;">Leave blank to use the default configured URL.</small>
+            <div id="resultsDisplay" class="results-display">
+                <div id="loadingSpinner" class="loading">
+                    <p>🏀 Submitting your picks to Google Sheets...</p>
                 </div>
+                <div id="summaryText"></div>
             </div>
+        </div>
+
+        <!-- DASHBOARD TAB -->
+        <div id="dashboard" class="tab-content">
+            <h2>📊 Office Pool Dashboard</h2>
+            <p>Track everyone's picks and scores in real-time</p>
             
-            <div class="instructions">
-                <h3>📋 How to Use This Bracket</h3>
-                <ol>
-                    <li><strong>Share the link:</strong> Send <code>https://golynx2025.github.io/WNBA-bracket-2025</code> to your friends</li>
-                    <li><strong>Participants submit picks:</strong> Everyone fills out the "Make Picks" form</li>
-                    <li><strong>View submissions:</strong> Check the "Dashboard" tab to see everyone's brackets</li>
-                    <li><strong>Track results:</strong> Update scores manually in your Google Sheet as games conclude</li>
-                    <li><strong>Declare winner:</strong> Person with most correct picks wins!</li>
+            <button class="refresh-btn" onclick="loadDashboard()">🔄 Refresh Data</button>
+            
+            <div id="dashboardLoading" class="loading">Loading dashboard data...</div>
+            <div id="dashboardContent">
+                <table class="dashboard-table" id="dashboardTable">
+                    <thead>
+                        <tr>
+                            <th>Participant</th>
+                            <th>Current Score</th>
+                            <th>Champion Pick</th>
+                            <th>Submitted</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dashboardTableBody">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ADMIN TAB -->
+        <div id="admin" class="tab-content">
+            <h2>⚙️ Admin Panel</h2>
+            
+            <div class="admin-section">
+                <h3>Google Sheets Setup</h3>
+                <p>To enable data saving, you need to set up a Google Apps Script Web App:</p>
+                
+                <ol style="line-height: 1.8; margin: 15px 0;">
+                    <li>Go to <a href="https://script.google.com" target="_blank" style="color: #ff6b35;">script.google.com</a></li>
+                    <li>Create a new project</li>
+                    <li>Paste the provided Apps Script code</li>
+                    <li>Deploy as a Web App</li>
+                    <li>Copy the Web App URL and paste it below</li>
                 </ol>
+                
+                <div style="margin: 20px 0;">
+                    <label for="webAppUrl"><strong>Google Apps Script Web App URL:</strong></label>
+                    <input type="url" id="webAppUrl" placeholder="https://script.google.com/macros/s/YOUR_ID/exec" 
+                           style="width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc;">
+                    <button onclick="saveWebAppUrl()" style="margin-top: 10px; padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Save URL</button>
+                </div>
+                
+                <div id="urlStatus" class="status-message" style="display: none;"></div>
             </div>
             
             <div class="admin-section">
-                <h3>🔗 Google Sheet Access</h3>
-                <p>Your submissions are saved to:</p>
-                <a href="https://docs.google.com/spreadsheets/d/19kWk_OPEJLZSA-43v-TRfhwsF9F0q4a38kdv0ywZ3Tg/edit" 
-                   target="_blank" style="color: #667eea; text-decoration: none; font-weight: bold;">
-                   📊 Open Your Google Sheet
-                </a>
+                <h3>Apps Script Code</h3>
+                <p>Copy and paste this code into your Google Apps Script:</p>
+                <textarea readonly style="width: 100%; height: 300px; background: #222; color: #0f0; padding: 15px; border-radius: 5px; font-family: monospace; margin-top: 10px;">function doPost(e) {
+  const sheet = SpreadsheetApp.openById('YOUR_SHEET_ID').getActiveSheet();
+  const data = JSON.parse(e.postData.contents);
+  
+  // Add headers if sheet is empty
+  if (sheet.getLastRow() === 0) {
+    sheet.getRange(1, 1, 1, 10).setValues([['Name', 'Game1', 'Game2', 'Game3', 'Game4', 'Semi1', 'Semi2', 'Finals', 'Timestamp', 'Score']]);
+  }
+  
+  // Add new submission
+  sheet.appendRow([
+    data.participantName,
+    data.game1,
+    data.game2, 
+    data.game3,
+    data.game4,
+    data.semi1,
+    data.semi2,
+    data.finals,
+    new Date(),
+    0 // Initial score
+  ]);
+  
+  return ContentService.createTextOutput('Success');
+}
+
+function doGet() {
+  const sheet = SpreadsheetApp.openById('YOUR_SHEET_ID').getActiveSheet();
+  const data = sheet.getDataRange().getValues();
+  return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
+}</textarea>
             </div>
         </div>
     </div>
 
     <script>
-        // Hardcoded Web App URL - works for everyone automatically
-        const DEFAULT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxokWTkfNLWsOm4h3zpwCO1vNU8-yod2HP-1aDdN3ujZMI93kVrHEPn-z2rhsJ6242YSw/exec';
+        // Configuration
+        let webAppUrl = localStorage.getItem('webAppUrl') || '';
         
-        // Tab switching
+        // Tab Management
         function showTab(tabName) {
-            // Hide all tab contents
-            const contents = document.querySelectorAll('.tab-content');
-            contents.forEach(content => content.classList.remove('active'));
-            
-            // Remove active class from all tabs
-            const tabs = document.querySelectorAll('.tab');
-            tabs.forEach(tab => tab.classList.remove('active'));
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
             
             // Show selected tab
             document.getElementById(tabName).classList.add('active');
-            
-            // Add active class to clicked tab
             event.target.classList.add('active');
             
-            // Load dashboard data when dashboard tab is opened
+            // Load dashboard data when switching to dashboard
             if (tabName === 'dashboard') {
                 loadDashboard();
             }
         }
         
-        // Form submission with Google Sheets integration
-        document.getElementById('bracketForm').addEventListener('submit', async function(e) {
+        // Form Submission - Simplified for Testing
+        document.getElementById('bracketForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            console.log('Form submitted!'); // Debug message
             
-            // Get Web App URL (use hardcoded if no override)
-            const overrideUrl = localStorage.getItem('webAppUrl');
-            const webAppUrl = (overrideUrl && overrideUrl.trim()) ? overrideUrl : DEFAULT_WEB_APP_URL;
-            
-            const formData = new FormData(this);
-            const submissionData = {};
-            
-            for (let [key, value] of formData.entries()) {
-                submissionData[key] = value;
-            }
-            
-            // Add timestamp
-            submissionData.timestamp = new Date().toISOString();
-            
-            showMessage('Submitting bracket...', 'info');
-            
-            try {
-                const response = await fetch(webAppUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(submissionData)
-                });
-                
-                // no-cors means we can't read the response, so assume success
-                displaySuccess(submissionData);
-                showMessage('Bracket submitted successfully! Check the Dashboard to see all picks.', 'success');
-                
-                // Clear form
-                this.reset();
-                updateDropdowns();
-                
-            } catch (error) {
-                console.error('Submission error:', error);
-                showMessage('Error submitting bracket. Please try again or contact admin.', 'error');
-            }
-        });
-        
-        // Load Dashboard Data from Google Sheets
-        async function loadDashboard() {
-            // Get Web App URL (use hardcoded if no override)
-            const overrideUrl = localStorage.getItem('webAppUrl');
-            const webAppUrl = (overrideUrl && overrideUrl.trim()) ? overrideUrl : DEFAULT_WEB_APP_URL;
-            
-            try {
-                document.getElementById('dashboardContent').innerHTML = '<p>Loading submissions...</p>';
-                
-                const response = await fetch(webAppUrl, {
-                    method: 'GET',
-                    mode: 'cors'
-                });
-                
-                const data = await response.json();
-                
-                if (!data || data.length <= 1) {
-                    document.getElementById('dashboardContent').innerHTML = 
-                        '<p>No submissions yet. Be the first to submit your bracket!</p>';
-                    return;
-                }
-                
-                // Skip header row
-                const submissions = data.slice(1);
-                
-                let html = '<div class="submissions-grid">';
-                
-                submissions.forEach((row, index) => {
-                    const [name, game1, game2, game3, game4, semi1, semi2, finals, timestamp, score] = row;
-                    
-                    html += `
-                        <div class="submission-card">
-                            <h3>${name || 'Anonymous'}</h3>
-                            <div class="picks-summary">
-                                <strong>First Round:</strong><br>
-                                ${game1} vs ${game2}<br>
-                                ${game3} vs ${game4}<br><br>
-                                <strong>Semifinals:</strong><br>
-                                ${semi1} vs ${semi2}<br><br>
-                                <strong>Champion:</strong><br>
-                                ${finals}<br><br>
-                                <small>Submitted: ${new Date(timestamp).toLocaleString()}</small><br>
-                                <small>Score: ${score || 0}</small>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                html += '</div>';
-                
-                document.getElementById('dashboardContent').innerHTML = html;
-                
-            } catch (error) {
-                console.error('Dashboard load error:', error);
-                document.getElementById('dashboardContent').innerHTML = 
-                    '<p style="color: #e74c3c;">Error loading submissions. Please check your connection.</p>';
-            }
-        }
-        
-        // Update dropdown dependencies
-        function updateDropdowns() {
+            // Get form data
+            const name = document.getElementById('participantName').value;
             const game1 = document.getElementById('game1').value;
             const game2 = document.getElementById('game2').value;
             const game3 = document.getElementById('game3').value;
             const game4 = document.getElementById('game4').value;
+            const semi1 = document.getElementById('semi1').value;
+            const semi2 = document.getElementById('semi2').value;
+            const finals = document.getElementById('finals').value;
             
-            // Update semifinal dropdowns
-            const semi1Select = document.getElementById('semi1');
-            const semi2Select = document.getElementById('semi2');
+            console.log('Name:', name); // Debug
+            console.log('All fields filled?', name && game1 && game2 && game3 && game4 && semi1 && semi2 && finals);
             
-            // Clear semifinal options
-            semi1Select.innerHTML = '<option value="">Select Winner</option>';
-            semi2Select.innerHTML = '<option value="">Select Winner</option>';
-            
-            // Add semifinal 1 options (Game 1 vs Game 2 winners)
-            if (game1) {
-                semi1Select.innerHTML += `<option value="${game1}">${game1}</option>`;
-            }
-            if (game2) {
-                semi1Select.innerHTML += `<option value="${game2}">${game2}</option>`;
+            // Check if all fields are filled
+            if (!name || !game1 || !game2 || !game3 || !game4 || !semi1 || !semi2 || !finals) {
+                alert('Please fill out all fields before submitting!');
+                return;
             }
             
-            // Add semifinal 2 options (Game 3 vs Game 4 winners)
-            if (game3) {
-                semi2Select.innerHTML += `<option value="${game3}">${game3}</option>`;
-            }
-            if (game4) {
-                semi2Select.innerHTML += `<option value="${game4}">${game4}</option>`;
-            }
+            const picks = {
+                participantName: name,
+                game1, game2, game3, game4, semi1, semi2, finals,
+                timestamp: new Date().toISOString()
+            };
             
-            // Update matchup displays
-            const semi1Matchup = document.getElementById('semi1-matchup');
-            const semi2Matchup = document.getElementById('semi2-matchup');
+            console.log('Picks object:', picks); // Debug
             
-            if (game1 && game2) {
-                semi1Matchup.textContent = `${game1} vs ${game2}`;
-            } else {
-                semi1Matchup.textContent = 'Select first round winners first';
+            // Save to localStorage
+            try {
+                const allPicks = JSON.parse(localStorage.getItem('allBracketPicks') || '[]');
+                allPicks.push(picks);
+                localStorage.setItem('allBracketPicks', JSON.stringify(allPicks));
+                console.log('Saved to localStorage:', allPicks); // Debug
+                
+                // Show success
+                alert('Bracket submitted successfully! Check the Dashboard tab.');
+                showTab('dashboard');
+                loadDashboard();
+                
+            } catch (error) {
+                console.error('Error saving:', error);
+                alert('Error saving bracket. Check console for details.');
             }
-            
-            if (game3 && game4) {
-                semi2Matchup.textContent = `${game3} vs ${game4}`;
-            } else {
-                semi2Matchup.textContent = 'Select first round winners first';
-            }
-            
-            // Update championship dropdown
-            const semi1Winner = document.getElementById('semi1').value;
-            const semi2Winner = document.getElementById('semi2').value;
-            const finalsSelect = document.getElementById('finals');
-            const finalsMatchup = document.getElementById('finals-matchup');
-            
-            finalsSelect.innerHTML = '<option value="">Select Champion</option>';
-            
-            if (semi1Winner) {
-                finalsSelect.innerHTML += `<option value="${semi1Winner}">${semi1Winner}</option>`;
-            }
-            if (semi2Winner) {
-                finalsSelect.innerHTML += `<option value="${semi2Winner}">${semi2Winner}</option>`;
-            }
-            
-            if (semi1Winner && semi2Winner) {
-                finalsMatchup.textContent = `${semi1Winner} vs ${semi2Winner}`;
-            } else {
-                finalsMatchup.textContent = 'Select semifinal winners first';
-            }
-        }
-        
-        // Add event listeners for dropdown updates
-        document.addEventListener('DOMContentLoaded', function() {
-            const dropdowns = ['game1', 'game2', 'game3', 'game4', 'semi1', 'semi2'];
-            dropdowns.forEach(id => {
-                document.getElementById(id).addEventListener('change', updateDropdowns);
-            });
         });
         
-        // Display success message
-        function displaySuccess(picks) {
-            const display = document.getElementById('successDisplay');
-            const picksDisplay = document.getElementById('picksDisplay');
+        // Dashboard Functions
+        async function loadDashboard() {
+            document.getElementById('dashboardLoading').style.display = 'block';
             
-            picksDisplay.innerHTML = `
-                <strong>Your Picks:</strong><br>
-                <strong>First Round:</strong><br>
-                ${picks.game1} vs ${picks.game2}<br>
-                ${picks.game3} vs ${picks.game4}<br><br>
-                <strong>Semifinals:</strong><br>
-                ${picks.semi1} vs ${picks.semi2}<br><br>
-                <strong>Champion:</strong><br>
-                ${picks.finals}
-            `;
+            // Try local storage first
+            const localPicks = JSON.parse(localStorage.getItem('allBracketPicks') || '[]');
             
-            display.style.display = 'block';
+            if (localPicks.length > 0) {
+                displayLocalDashboard(localPicks);
+                document.getElementById('dashboardLoading').style.display = 'none';
+                return;
+            }
             
-            // Hide after 10 seconds
-            setTimeout(() => {
-                display.style.display = 'none';
-            }, 10000);
+            // Try Google Sheets if configured
+            if (!webAppUrl) {
+                document.getElementById('dashboardContent').innerHTML = 
+                    '<p style="text-align: center; color: #ff6b35;">No picks submitted yet. Google Sheets not configured.</p>';
+                document.getElementById('dashboardLoading').style.display = 'none';
+                return;
+            }
+            
+            try {
+                const response = await fetch(webAppUrl);
+                const data = await response.json();
+                
+                if (data.length > 1) {
+                    displayDashboard(data);
+                } else {
+                    document.getElementById('dashboardTableBody').innerHTML = 
+                        '<tr><td colspan="4" style="text-align: center;">No submissions yet</td></tr>';
+                }
+            } catch (error) {
+                console.error('Dashboard load error:', error);
+                // Fall back to local storage
+                if (localPicks.length > 0) {
+                    displayLocalDashboard(localPicks);
+                } else {
+                    document.getElementById('dashboardTableBody').innerHTML = 
+                        '<tr><td colspan="4" style="text-align: center; color: #f44336;">Error loading data. No local picks found.</td></tr>';
+                }
+            }
+            
+            document.getElementById('dashboardLoading').style.display = 'none';
         }
         
-        // Show messages
-        function showMessage(text, type = 'info') {
-            const container = document.getElementById('message-container');
+        function displayLocalDashboard(picks) {
+            const tbody = document.getElementById('dashboardTableBody');
             
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${type}`;
-            messageDiv.textContent = text;
+            const html = picks.map(pick => {
+                const submitTime = new Date(pick.timestamp).toLocaleString();
+                return `
+                    <tr>
+                        <td><strong>${pick.participantName}</strong></td>
+                        <td>0 pts (local)</td>
+                        <td>🏆 ${pick.finals}</td>
+                        <td>${submitTime}</td>
+                    </tr>
+                `;
+            }).join('');
             
-            container.innerHTML = '';
-            container.appendChild(messageDiv);
-            
-            // Auto-hide after 5 seconds
-            setTimeout(() => {
-                messageDiv.remove();
-            }, 5000);
+            tbody.innerHTML = html || '<tr><td colspan="4" style="text-align: center;">No picks yet</td></tr>';
         }
         
-        // Admin functions
+        function displayDashboard(data) {
+            const tbody = document.getElementById('dashboardTableBody');
+            const headers = data[0];
+            const rows = data.slice(1);
+            
+            const html = rows.map(row => {
+                const submitTime = new Date(row[8]).toLocaleString();
+                return `
+                    <tr>
+                        <td><strong>${row[0]}</strong></td>
+                        <td>${row[9]} pts</td>
+                        <td>🏆 ${row[7]}</td>
+                        <td>${submitTime}</td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tbody.innerHTML = html;
+        }
+        
+        // Update dependent dropdowns when selections change
+        document.querySelectorAll('select[name^="game"]').forEach(select => {
+            select.addEventListener('change', updateSemiFinalists);
+        });
+        
+        document.querySelectorAll('select[name^="semi"]').forEach(select => {
+            select.addEventListener('change', updateFinalists);
+        });
+        
+        function updateSemiFinalists() {
+            const game1Winner = document.getElementById('game1').value;
+            const game2Winner = document.getElementById('game2').value;
+            const game3Winner = document.getElementById('game3').value;
+            const game4Winner = document.getElementById('game4').value;
+            
+            // Update Semifinal 1 (Game 1 + Game 2 winners)
+            const semi1Select = document.getElementById('semi1');
+            const semi1Options = ['', game1Winner, game2Winner].filter(Boolean);
+            updateSelectOptions(semi1Select, semi1Options);
+            
+            // Update Semifinal 2 (Game 3 + Game 4 winners)
+            const semi2Select = document.getElementById('semi2');
+            const semi2Options = ['', game3Winner, game4Winner].filter(Boolean);
+            updateSelectOptions(semi2Select, semi2Options);
+            
+            // Clear finals when first round changes
+            document.getElementById('finals').selectedIndex = 0;
+        }
+        
+        function updateFinalists() {
+            const semi1Winner = document.getElementById('semi1').value;
+            const semi2Winner = document.getElementById('semi2').value;
+            
+            // Update Finals (Semifinal winners only)
+            const finalsSelect = document.getElementById('finals');
+            const finalsOptions = ['', semi1Winner, semi2Winner].filter(Boolean);
+            updateSelectOptions(finalsSelect, finalsOptions);
+        }
+        
+        function updateSelectOptions(selectElement, options) {
+            const currentValue = selectElement.value;
+            selectElement.innerHTML = '';
+            
+            options.forEach(option => {
+                const optionElement = document.createElement('option');
+                optionElement.value = option;
+                optionElement.textContent = option || 'Select Winner';
+                selectElement.appendChild(optionElement);
+            });
+            
+            // Restore selection if still valid
+            if (options.includes(currentValue)) {
+                selectElement.value = currentValue;
+            }
+        }
+        
+        // Admin Functions
         function saveWebAppUrl() {
             const url = document.getElementById('webAppUrl').value.trim();
-            
             if (url) {
                 localStorage.setItem('webAppUrl', url);
-                showMessage('Custom URL saved! This will override the default URL.', 'success');
+                webAppUrl = url;
+                showMessage('Web App URL saved successfully!', 'success');
             } else {
-                localStorage.removeItem('webAppUrl');
-                showMessage('Custom URL cleared! Using default configured URL.', 'info');
+                showMessage('Please enter a valid URL', 'error');
             }
+        }
+        
+        function showMessage(message, type) {
+            const statusDiv = document.getElementById('urlStatus');
+            statusDiv.textContent = message;
+            statusDiv.className = `status-message status-${type}`;
+            statusDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 4000);
         }
         
         // Load saved URL on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const savedUrl = localStorage.getItem('webAppUrl');
-            if (savedUrl) {
-                document.getElementById('webAppUrl').value = savedUrl;
-            }
-        });
+        if (webAppUrl) {
+            document.getElementById('webAppUrl').value = webAppUrl;
+        }
     </script>
 </body>
 </html>
