@@ -624,110 +624,82 @@ function doGet() {
             }
         }
         
-        // Form Submission
-        document.getElementById('bracketForm').addEventListener('submit', async function(e) {
+        // Form Submission - Simplified for Testing
+        document.getElementById('bracketForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            console.log('Form submitted!'); // Debug message
             
-            if (!webAppUrl) {
-                showMessage('Please set up Google Sheets integration in the Admin tab first!', 'error');
-                showTab('admin');
+            // Get form data
+            const name = document.getElementById('participantName').value;
+            const game1 = document.getElementById('game1').value;
+            const game2 = document.getElementById('game2').value;
+            const game3 = document.getElementById('game3').value;
+            const game4 = document.getElementById('game4').value;
+            const semi1 = document.getElementById('semi1').value;
+            const semi2 = document.getElementById('semi2').value;
+            const finals = document.getElementById('finals').value;
+            
+            console.log('Name:', name); // Debug
+            console.log('All fields filled?', name && game1 && game2 && game3 && game4 && semi1 && semi2 && finals);
+            
+            // Check if all fields are filled
+            if (!name || !game1 || !game2 || !game3 || !game4 || !semi1 || !semi2 || !finals) {
+                alert('Please fill out all fields before submitting!');
                 return;
             }
             
-            const formData = new FormData(this);
-            const picks = {};
+            const picks = {
+                participantName: name,
+                game1, game2, game3, game4, semi1, semi2, finals,
+                timestamp: new Date().toISOString()
+            };
             
-            for (let [key, value] of formData.entries()) {
-                picks[key] = value;
-            }
+            console.log('Picks object:', picks); // Debug
             
-            // Show loading
-            document.getElementById('loadingSpinner').style.display = 'block';
-            document.getElementById('resultsDisplay').style.display = 'block';
-            document.getElementById('submitBtn').disabled = true;
-            
+            // Save to localStorage
             try {
-                // Submit to Google Sheets
-                const response = await fetch(webAppUrl, {
-                    method: 'POST',
-                    body: JSON.stringify(picks),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
+                const allPicks = JSON.parse(localStorage.getItem('allBracketPicks') || '[]');
+                allPicks.push(picks);
+                localStorage.setItem('allBracketPicks', JSON.stringify(allPicks));
+                console.log('Saved to localStorage:', allPicks); // Debug
                 
-                if (response.ok) {
-                    displaySuccess(picks);
-                } else {
-                    throw new Error('Failed to submit to Google Sheets');
-                }
+                // Show success
+                alert('Bracket submitted successfully! Check the Dashboard tab.');
+                showTab('dashboard');
+                loadDashboard();
+                
             } catch (error) {
-                console.error('Submission error:', error);
-                showMessage('Error submitting bracket. Please try again or contact admin.', 'error');
+                console.error('Error saving:', error);
+                alert('Error saving bracket. Check console for details.');
             }
-            
-            // Hide loading
-            document.getElementById('loadingSpinner').style.display = 'none';
-            document.getElementById('submitBtn').disabled = false;
         });
-        
-        function displaySuccess(picks) {
-            const summaryDiv = document.getElementById('summaryText');
-            const resultsDiv = document.getElementById('resultsDisplay');
-            
-            let summary = `
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <h3 style="color: #4CAF50;">🎉 Bracket Submitted Successfully!</h3>
-                    <p><strong>${picks.participantName}'s Picks</strong></p>
-                </div>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
-                        <h4 style="color: #ff6b35; margin-bottom: 10px;">First Round (1 pt each)</h4>
-                        <div>• ${picks.game1}</div>
-                        <div>• ${picks.game2}</div>
-                        <div>• ${picks.game3}</div>
-                        <div>• ${picks.game4}</div>
-                    </div>
-                    
-                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
-                        <h4 style="color: #ff6b35; margin-bottom: 10px;">Semifinals (2 pts each)</h4>
-                        <div>• ${picks.semi1}</div>
-                        <div>• ${picks.semi2}</div>
-                    </div>
-                    
-                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
-                        <h4 style="color: #ff6b35; margin-bottom: 10px;">Champion (4 pts)</h4>
-                        <div style="font-size: 1.2em; font-weight: bold;">🏆 ${picks.finals}</div>
-                    </div>
-                </div>
-                
-                <div style="text-align: center; margin-top: 20px; background: rgba(76,175,80,0.1); padding: 15px; border-radius: 8px;">
-                    <p style="color: #4CAF50; font-weight: bold;">Your picks have been saved to the Google Sheet!</p>
-                    <p>Check the Dashboard to see everyone's picks. Good luck! 🍀</p>
-                </div>
-            `;
-            
-            summaryDiv.innerHTML = summary;
-            resultsDiv.classList.add('success');
-            resultsDiv.scrollIntoView({ behavior: 'smooth' });
-        }
         
         // Dashboard Functions
         async function loadDashboard() {
-            if (!webAppUrl) {
-                document.getElementById('dashboardContent').innerHTML = 
-                    '<p style="text-align: center; color: #ff6b35;">Please set up Google Sheets integration in Admin tab first.</p>';
+            document.getElementById('dashboardLoading').style.display = 'block';
+            
+            // Try local storage first
+            const localPicks = JSON.parse(localStorage.getItem('allBracketPicks') || '[]');
+            
+            if (localPicks.length > 0) {
+                displayLocalDashboard(localPicks);
+                document.getElementById('dashboardLoading').style.display = 'none';
                 return;
             }
             
-            document.getElementById('dashboardLoading').style.display = 'block';
+            // Try Google Sheets if configured
+            if (!webAppUrl) {
+                document.getElementById('dashboardContent').innerHTML = 
+                    '<p style="text-align: center; color: #ff6b35;">No picks submitted yet. Google Sheets not configured.</p>';
+                document.getElementById('dashboardLoading').style.display = 'none';
+                return;
+            }
             
             try {
                 const response = await fetch(webAppUrl);
                 const data = await response.json();
                 
-                if (data.length > 1) { // Has data beyond headers
+                if (data.length > 1) {
                     displayDashboard(data);
                 } else {
                     document.getElementById('dashboardTableBody').innerHTML = 
@@ -735,11 +707,34 @@ function doGet() {
                 }
             } catch (error) {
                 console.error('Dashboard load error:', error);
-                document.getElementById('dashboardTableBody').innerHTML = 
-                    '<tr><td colspan="4" style="text-align: center; color: #f44336;">Error loading data</td></tr>';
+                // Fall back to local storage
+                if (localPicks.length > 0) {
+                    displayLocalDashboard(localPicks);
+                } else {
+                    document.getElementById('dashboardTableBody').innerHTML = 
+                        '<tr><td colspan="4" style="text-align: center; color: #f44336;">Error loading data. No local picks found.</td></tr>';
+                }
             }
             
             document.getElementById('dashboardLoading').style.display = 'none';
+        }
+        
+        function displayLocalDashboard(picks) {
+            const tbody = document.getElementById('dashboardTableBody');
+            
+            const html = picks.map(pick => {
+                const submitTime = new Date(pick.timestamp).toLocaleString();
+                return `
+                    <tr>
+                        <td><strong>${pick.participantName}</strong></td>
+                        <td>0 pts (local)</td>
+                        <td>🏆 ${pick.finals}</td>
+                        <td>${submitTime}</td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tbody.innerHTML = html || '<tr><td colspan="4" style="text-align: center;">No picks yet</td></tr>';
         }
         
         function displayDashboard(data) {
@@ -760,6 +755,62 @@ function doGet() {
             }).join('');
             
             tbody.innerHTML = html;
+        }
+        
+        // Update dependent dropdowns when selections change
+        document.querySelectorAll('select[name^="game"]').forEach(select => {
+            select.addEventListener('change', updateSemiFinalists);
+        });
+        
+        document.querySelectorAll('select[name^="semi"]').forEach(select => {
+            select.addEventListener('change', updateFinalists);
+        });
+        
+        function updateSemiFinalists() {
+            const game1Winner = document.getElementById('game1').value;
+            const game2Winner = document.getElementById('game2').value;
+            const game3Winner = document.getElementById('game3').value;
+            const game4Winner = document.getElementById('game4').value;
+            
+            // Update Semifinal 1 (Game 1 + Game 2 winners)
+            const semi1Select = document.getElementById('semi1');
+            const semi1Options = ['', game1Winner, game2Winner].filter(Boolean);
+            updateSelectOptions(semi1Select, semi1Options);
+            
+            // Update Semifinal 2 (Game 3 + Game 4 winners)
+            const semi2Select = document.getElementById('semi2');
+            const semi2Options = ['', game3Winner, game4Winner].filter(Boolean);
+            updateSelectOptions(semi2Select, semi2Options);
+            
+            // Clear finals when first round changes
+            document.getElementById('finals').selectedIndex = 0;
+        }
+        
+        function updateFinalists() {
+            const semi1Winner = document.getElementById('semi1').value;
+            const semi2Winner = document.getElementById('semi2').value;
+            
+            // Update Finals (Semifinal winners only)
+            const finalsSelect = document.getElementById('finals');
+            const finalsOptions = ['', semi1Winner, semi2Winner].filter(Boolean);
+            updateSelectOptions(finalsSelect, finalsOptions);
+        }
+        
+        function updateSelectOptions(selectElement, options) {
+            const currentValue = selectElement.value;
+            selectElement.innerHTML = '';
+            
+            options.forEach(option => {
+                const optionElement = document.createElement('option');
+                optionElement.value = option;
+                optionElement.textContent = option || 'Select Winner';
+                selectElement.appendChild(optionElement);
+            });
+            
+            // Restore selection if still valid
+            if (options.includes(currentValue)) {
+                selectElement.value = currentValue;
+            }
         }
         
         // Admin Functions
