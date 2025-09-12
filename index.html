@@ -657,6 +657,7 @@ function doGet() {
             console.log('Picks object:', picks); // Debug
             // Send to Google Sheets
         try {
+            alert('about to submit');
             const response = await fetch(WEB_APP_URL, {
   method: 'POST',
   headers: { 'Content-Type': 'text/plain;charset=utf-8' },
