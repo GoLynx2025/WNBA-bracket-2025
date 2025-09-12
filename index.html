@@ -602,7 +602,7 @@ function doGet() {
 
     <script>
         // Configuration
-     let webAppUrl = 'https://script.google.com/macros/s/AKfycbxokWTkfNLWsOm4h3zpwCO1vNU8-yod2HP-1aDdN3ujZMI93kVrHEPn-z2rhsJ6242YSw/exec';
+  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxokWTkfNLWsOm4h3zpwCO1vNU8-yod2HP-1aDdN3ujZMI93kVrHEPn-z2rhsJ6242YSw/exec';
         
         // Tab Management
         function showTab(tabName) {
@@ -657,14 +657,12 @@ function doGet() {
             console.log('Picks object:', picks); // Debug
             // Send to Google Sheets
         try {
-            const response = await fetch(webAppUrl, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(picks)
-            });
+            const response = await fetch(WEB_APP_URL, {
+  method: 'POST',
+  headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+  body: JSON.stringify(picks)
+});
+
             console.log('Sent to Google Sheets');
         } catch (error) {
             console.error('Google Sheets error:', error);
