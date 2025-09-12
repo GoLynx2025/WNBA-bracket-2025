@@ -600,261 +600,136 @@ function doGet() {
         </div>
     </div>
 
-    <script>
-        // Configuration
-  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxokWTkfNLWsOm4h3zpwCO1vNU8-yod2HP-1aDdN3ujZMI93kVrHEPn-z2rhsJ6242YSw/exec';
-        
-        // Tab Management
-        function showTab(tabName) {
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.nav-tab').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // Show selected tab
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-            
-            // Load dashboard data when switching to dashboard
-            if (tabName === 'dashboard') {
-                loadDashboard();
-            }
-        }
-        
-        // Form Submission - Simplified for Testing
-        document.getElementById('bracketForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            console.log('Form submitted!'); // Debug message
-            
-            // Get form data
-            const name = document.getElementById('participantName').value;
-            const game1 = document.getElementById('game1').value;
-            const game2 = document.getElementById('game2').value;
-            const game3 = document.getElementById('game3').value;
-            const game4 = document.getElementById('game4').value;
-            const semi1 = document.getElementById('semi1').value;
-            const semi2 = document.getElementById('semi2').value;
-            const finals = document.getElementById('finals').value;
-            
-            console.log('Name:', name); // Debug
-            console.log('All fields filled?', name && game1 && game2 && game3 && game4 && semi1 && semi2 && finals);
-            
-            // Check if all fields are filled
-            if (!name || !game1 || !game2 || !game3 || !game4 || !semi1 || !semi2 || !finals) {
-                alert('Please fill out all fields before submitting!');
-                return;
-            }
-            
-            const picks = {
-                participantName: name,
-                game1, game2, game3, game4, semi1, semi2, finals,
-                timestamp: new Date().toISOString()
-            };
-            
-            console.log('Picks object:', picks); // Debug
-            // Send to Google Sheets
-        try {
-            alert('about to submit');
-            const response = await fetch(WEB_APP_URL, {
-  method: 'POST',
-  headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-  body: JSON.stringify(picks)
+<script>
+// === WNBA Bracket — Single Script Replacement ===
+// 1) Your deployed Apps Script Web App URL:
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxokWTkfNLWsOm4h3zpwCO1vNU8-yod2HP-1aDdN3ujZMI93kVrHEPn-z2rhsJ6242YSw/exec';
+
+// 2) Utility: safe element getter
+function $(sel) { return document.querySelector(sel); }
+
+// 3) Smart dropdown helpers
+function setOptions(selectId, teams) {
+  const sel = $('#' + selectId);
+  if (!sel) return;
+  const current = sel.value;
+  sel.innerHTML = '<option value="">Select Winner</option>' +
+    teams.map(t => `<option value="${t}">${t}</option>`).join('');
+  if (teams.includes(current)) sel.value = current;
+}
+
+function updateSemis() {
+  const g1 = ($('#game1') || {}).value || '';
+  const g2 = ($('#game2') || {}).value || '';
+  const g3 = ($('#game3') || {}).value || '';
+  const g4 = ($('#game4') || {}).value || '';
+  setOptions('semi1', [g1, g2].filter(Boolean));
+  setOptions('semi2', [g3, g4].filter(Boolean));
+  updateFinals();
+}
+
+function updateFinals() {
+  const s1 = ($('#semi1') || {}).value || '';
+  const s2 = ($('#semi2') || {}).value || '';
+  setOptions('finals', [s1, s2].filter(Boolean));
+}
+
+// 4) Build payload from form
+function buildPicks() {
+  return {
+    participantName: ($('#participantName') || {}).value?.trim() || '',
+    game1: ($('#game1') || {}).value || '',
+    game2: ($('#game2') || {}).value || '',
+    game3: ($('#game3') || {}).value || '',
+    game4: ($('#game4') || {}).value || '',
+    semi1: ($('#semi1') || {}).value || '',
+    semi2: ($('#semi2') || {}).value || '',
+    finals: ($('#finals') || {}).value || ''
+  };
+}
+
+// 5) Submit to Google Sheets via Apps Script
+async function submitBracket(e) {
+  // Works whether called by form submit or button click
+  if (e && typeof e.preventDefault === 'function') e.preventDefault();
+
+  // Basic guard rails
+  const name = ($('#participantName') || {}).value?.trim();
+  if (!name) {
+    alert('Please enter your name before submitting.');
+    ($('#participantName') || {}).focus?.();
+    return;
+  }
+
+  // Make sure finals has a value (best effort)
+  const finalsSel = $('#finals');
+  if (!finalsSel || !finalsSel.value) {
+    // Try to update finals in case semis just changed
+    updateFinals();
+  }
+
+  const picks = buildPicks();
+
+  try {
+    const response = await fetch(WEB_APP_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(picks)
+    });
+
+    const text = await response.text();
+    // Show exactly what the server replied (useful for debugging)
+    alert(text);
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    // Optional: clear the form after success
+    // (uncomment if you want)
+    // (document.querySelector('form') || {}).reset?.();
+    // updateSemis(); // refresh dependent dropdowns
+  } catch (err) {
+    alert('Submission failed. Please try again.\n\n' + String(err));
+    console.error(err);
+  }
+}
+
+// 6) Wire up events once DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  // Wire change listeners for smart dropdowns
+  ['#game1','#game2','#game3','#game4'].forEach(id => {
+    const el = $(id);
+    if (el) el.addEventListener('change', updateSemis);
+  });
+  ['#semi1','#semi2'].forEach(id => {
+    const el = $(id);
+    if (el) el.addEventListener('change', updateFinals);
+  });
+
+  // Initialize options on load
+  updateSemis();
+
+  // Hook up submit
+  // Prefer form submit if there is a <form id="bracketForm">; otherwise bind the button.
+  const form = $('#bracketForm') || $('form');
+  const btn = $('#submitBtn'); // your actual button id from the markup
+
+  if (form) {
+    form.addEventListener('submit', submitBracket);
+  }
+  if (btn) {
+    // Also bind click in case the button lives outside the form or the form prevents submit
+    btn.addEventListener('click', submitBracket);
+  }
+
+  // Remove any leftover admin/localStorage wiring by noop-ing known functions/vars safely
+  // (prevents errors if the HTML still references them)
+  window.saveWebAppUrl = function() {};
 });
-const text = await response.text();
-alert(text);
 
-            console.log('Sent to Google Sheets');
-        } catch (error) {
-            console.error('Google Sheets error:', error);
-        }
-            
-            // Save to localStorage
-            try {
-                const allPicks = JSON.parse(localStorage.getItem('allBracketPicks') || '[]');
-                allPicks.push(picks);
-                localStorage.setItem('allBracketPicks', JSON.stringify(allPicks));
-                console.log('Saved to localStorage:', allPicks); // Debug
-                
-                // Show success
-           alert('Submission complete — see message above for details.');
+// === End single script replacement ===
+</script>
 
-                loadDashboard();
-                
-            } catch (error) {
-                console.error('Error saving:', error);
-                alert('Error saving bracket. Check console for details.');
-            }
-        });
-        
-        // Dashboard Functions
-        async function loadDashboard() {
-            document.getElementById('dashboardLoading').style.display = 'block';
-            
-            // Try local storage first
-            const localPicks = JSON.parse(localStorage.getItem('allBracketPicks') || '[]');
-            
-            if (localPicks.length > 0) {
-                displayLocalDashboard(localPicks);
-                document.getElementById('dashboardLoading').style.display = 'none';
-                return;
-            }
-            
-            // Try Google Sheets if configured
-            if (!webAppUrl) {
-                document.getElementById('dashboardContent').innerHTML = 
-                    '<p style="text-align: center; color: #ff6b35;">No picks submitted yet. Google Sheets not configured.</p>';
-                document.getElementById('dashboardLoading').style.display = 'none';
-                return;
-            }
-            
-            try {
-                const response = await fetch(webAppUrl);
-                const data = await response.json();
-                
-                if (data.length > 1) {
-                    displayDashboard(data);
-                } else {
-                    document.getElementById('dashboardTableBody').innerHTML = 
-                        '<tr><td colspan="4" style="text-align: center;">No submissions yet</td></tr>';
-                }
-            } catch (error) {
-                console.error('Dashboard load error:', error);
-                // Fall back to local storage
-                if (localPicks.length > 0) {
-                    displayLocalDashboard(localPicks);
-                } else {
-                    document.getElementById('dashboardTableBody').innerHTML = 
-                        '<tr><td colspan="4" style="text-align: center; color: #f44336;">Error loading data. No local picks found.</td></tr>';
-                }
-            }
-            
-            document.getElementById('dashboardLoading').style.display = 'none';
-        }
-        
-        function displayLocalDashboard(picks) {
-            const tbody = document.getElementById('dashboardTableBody');
-            
-            const html = picks.map(pick => {
-                const submitTime = new Date(pick.timestamp).toLocaleString();
-                return `
-                    <tr>
-                        <td><strong>${pick.participantName}</strong></td>
-                        <td>0 pts (local)</td>
-                        <td>🏆 ${pick.finals}</td>
-                        <td>${submitTime}</td>
-                    </tr>
-                `;
-            }).join('');
-            
-            tbody.innerHTML = html || '<tr><td colspan="4" style="text-align: center;">No picks yet</td></tr>';
-        }
-        
-        function displayDashboard(data) {
-            const tbody = document.getElementById('dashboardTableBody');
-            const headers = data[0];
-            const rows = data.slice(1);
-            
-            const html = rows.map(row => {
-                const submitTime = new Date(row[8]).toLocaleString();
-                return `
-                    <tr>
-                        <td><strong>${row[0]}</strong></td>
-                        <td>${row[9]} pts</td>
-                        <td>🏆 ${row[7]}</td>
-                        <td>${submitTime}</td>
-                    </tr>
-                `;
-            }).join('');
-            
-            tbody.innerHTML = html;
-        }
-        
-        // Update dependent dropdowns when selections change
-        document.querySelectorAll('select[name^="game"]').forEach(select => {
-            select.addEventListener('change', updateSemiFinalists);
-        });
-        
-        document.querySelectorAll('select[name^="semi"]').forEach(select => {
-            select.addEventListener('change', updateFinalists);
-        });
-        
-        function updateSemiFinalists() {
-            const game1Winner = document.getElementById('game1').value;
-            const game2Winner = document.getElementById('game2').value;
-            const game3Winner = document.getElementById('game3').value;
-            const game4Winner = document.getElementById('game4').value;
-            
-            // Update Semifinal 1 (Game 1 + Game 2 winners)
-            const semi1Select = document.getElementById('semi1');
-            const semi1Options = ['', game1Winner, game2Winner].filter(Boolean);
-            updateSelectOptions(semi1Select, semi1Options);
-            
-            // Update Semifinal 2 (Game 3 + Game 4 winners)
-            const semi2Select = document.getElementById('semi2');
-            const semi2Options = ['', game3Winner, game4Winner].filter(Boolean);
-            updateSelectOptions(semi2Select, semi2Options);
-            
-            // Clear finals when first round changes
-            document.getElementById('finals').selectedIndex = 0;
-        }
-        
-        function updateFinalists() {
-            const semi1Winner = document.getElementById('semi1').value;
-            const semi2Winner = document.getElementById('semi2').value;
-            
-            // Update Finals (Semifinal winners only)
-            const finalsSelect = document.getElementById('finals');
-            const finalsOptions = ['', semi1Winner, semi2Winner].filter(Boolean);
-            updateSelectOptions(finalsSelect, finalsOptions);
-        }
-        
-        function updateSelectOptions(selectElement, options) {
-            const currentValue = selectElement.value;
-            selectElement.innerHTML = '';
-            
-            options.forEach(option => {
-                const optionElement = document.createElement('option');
-                optionElement.value = option;
-                optionElement.textContent = option || 'Select Winner';
-                selectElement.appendChild(optionElement);
-            });
-            
-            // Restore selection if still valid
-            if (options.includes(currentValue)) {
-                selectElement.value = currentValue;
-            }
-        }
-        
-        // Admin Functions
-        function saveWebAppUrl() {
-            const url = document.getElementById('webAppUrl').value.trim();
-            if (url) {
-                localStorage.setItem('webAppUrl', url);
-                webAppUrl = url;
-                showMessage('Web App URL saved successfully!', 'success');
-            } else {
-                showMessage('Please enter a valid URL', 'error');
-            }
-        }
-        
-        function showMessage(message, type) {
-            const statusDiv = document.getElementById('urlStatus');
-            statusDiv.textContent = message;
-            statusDiv.className = `status-message status-${type}`;
-            statusDiv.style.display = 'block';
-            
-            setTimeout(() => {
-                statusDiv.style.display = 'none';
-            }, 4000);
-        }
-        
-        // Load saved URL on page load
-        if (webAppUrl) {
-            document.getElementById('webAppUrl').value = webAppUrl;
-        }
-    </script>
 </body>
 </html>
