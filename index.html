@@ -652,7 +652,7 @@ function loadDashboard() {
         document.getElementById('dashboardTableBody').innerHTML = html;
         })
         .catch(error => {
-            document.getElementById('dashboard-content').innerHTML = '<p>Error loading data.</p>';
+        document.getElementById('dashboardTableBody').innerHTML = '<p>Error loading data.</p>';
         });
 }
 
