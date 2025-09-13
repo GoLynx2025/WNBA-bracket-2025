@@ -641,13 +641,11 @@ function loadDashboard() {
             }
      
             let html = '';
-            data.slice(1).forEach(row => {
-                const [name, game1, game2, game3, game4, semi1, semi2, finals] = row;
-               html += `<tr>
-    <td>${name}</td>
-    <td>0</td>
-    <td>${finals}</td>
-    <td>Submitted</td>
+         data.forEach(row => {
+                html += '<tr>'
+    +'<td>' + row.name + '</td>'
+    +'<td></td>'
+    +'<td>' + row.champion + '</td>'
 </tr>`;
             });
             
