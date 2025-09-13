@@ -630,7 +630,7 @@ function loadDashboard() {
     const webAppUrl = 'https://script.google.com/macros/s/AKfycbxokWTkfNLWsOm4h3zpwCO1vNU8-yod2HP-1aDdN3ujZMI93kVrHEPn-z2rhsJ6242YSw/exec';
     
   document.getElementById('dashboardTableBody').innerHTML = '<p>Loading submissions...</p>';
-    
+  console.log('About to fetch from:', webAppUrl);  
     fetch(webAppUrl)
         .then(response => response.json())
         .then(data => {
