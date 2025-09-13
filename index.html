@@ -640,14 +640,19 @@ function loadDashboard() {
                 return;
             }
      
-            let html = '';
-         data.forEach(row => {
-                html += '<tr>'
-    +'<td>' + row.name + '</td>'
-    +'<td></td>'
-    +'<td>' + row.champion + '</td>'
-</tr>`;
-            });
+          let html = '';
+console.log('About to process', data.length, 'rows');
+data.forEach((row, index) => {
+    console.log('Processing row', index, row);
+    html += '<tr>'
+        +'<td>' + (row.name || 'No name') + '</td>'
+        +'<td></td>'
+        +'<td>' + (row.champion || 'No champion') + '</td>'
+        +'<td>Submitted</td>'
+    +'</tr>';
+    console.log('HTML after row', index, html.length, 'characters');
+});
+console.log('Final HTML length:', html.length);
             
         document.getElementById('dashboardTableBody').innerHTML = html;
         })
