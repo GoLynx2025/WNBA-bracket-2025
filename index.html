@@ -607,7 +607,24 @@ const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxokWTkfNLWsOm4h3zp
 
 // 2) Utility: safe element getter
 function $(sel) { return document.querySelector(sel); }
-
+function showTab(tabName) {
+    // Hide all tabs
+    const contents = document.querySelectorAll('.tab-content');
+    contents.forEach(content => content.classList.remove('active'));
+    
+    const tabs = document.querySelectorAll('.nav-tab');
+    tabs.forEach(tab => tab.classList.remove('active'));
+    
+    // Show selected tab
+    document.getElementById(tabName).classList.add('active');
+    event.target.classList.add('active');
+    
+    // Load dashboard when clicked
+    if (tabName === 'dashboard') {
+        loadDashboard();
+    }
+}
+    
 // 3) Smart dropdown helpers
 function setOptions(selectId, teams) {
   const sel = $('#' + selectId);
