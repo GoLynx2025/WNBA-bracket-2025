@@ -725,9 +725,7 @@ async function submitBracket(e) {
       body: JSON.stringify(picks)
     });
 
-    const text = await response.text();
-    // Show exactly what the server replied (useful for debugging)
-    alert(text);
+  alert('Thanks! Your bracket has been submitted successfully. Check the Dashboard to see everyone\'s picks!');
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
