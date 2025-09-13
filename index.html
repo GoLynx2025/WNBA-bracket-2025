@@ -608,6 +608,7 @@ const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxokWTkfNLWsOm4h3zp
 // 2) Utility: safe element getter
 function $(sel) { return document.querySelector(sel); }
 function showTab(tabName) {
+    console.log('showTab called with:', tabName);
     // Hide all tabs
     const contents = document.querySelectorAll('.tab-content');
     contents.forEach(content => content.classList.remove('active'));
