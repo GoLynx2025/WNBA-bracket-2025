@@ -624,6 +624,34 @@ function showTab(tabName) {
         loadDashboard();
     }
 }
+function loadDashboard() {
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbxokWTkfNLWsOm4h3zpwCO1vNU8-yod2HP-1aDdN3ujZMI93kVrHEPn-z2rhsJ6242YSw/exec';
+    
+    document.getElementById('dashboard-content').innerHTML = '<p>Loading submissions...</p>';
+    
+    fetch(webAppUrl)
+        .then(response => response.json())
+        .then(data => {
+            if (!data || data.length <= 1) {
+                document.getElementById('dashboard-content').innerHTML = '<p>No submissions yet.</p>';
+                return;
+            }
+            
+            let html = '';
+            data.slice(1).forEach(row => {
+                const [name, game1, game2, game3, game4, semi1, semi2, finals] = row;
+                html += `<div style="border: 1px solid #ccc; padding: 15px; margin: 10px 0;">
+                    <h3>${name}</h3>
+                    <p>Champion: ${finals}</p>
+                </div>`;
+            });
+            
+            document.getElementById('dashboard-content').innerHTML = html;
+        })
+        .catch(error => {
+            document.getElementById('dashboard-content').innerHTML = '<p>Error loading data.</p>';
+        });
+}
     
 // 3) Smart dropdown helpers
 function setOptions(selectId, teams) {
