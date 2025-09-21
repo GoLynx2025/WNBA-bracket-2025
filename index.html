@@ -641,6 +641,7 @@ function loadDashboard() {
      
           let html = '';
 console.log('About to process', data.length, 'rows');
+            data.sort((a, b) => (b.score || 0) - (a.score || 0));
 data.forEach((row, index) => {
     console.log('Processing row', index, row);
     html += '<tr>'
